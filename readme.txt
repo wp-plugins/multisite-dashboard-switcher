@@ -12,6 +12,11 @@ to easily switch between Dashboards. MSDS provides convenient access to options 
 in the network, reducing the number of clicks necessary to manage settings. For larger networks, sites
 can be grouped by letter.
 
+Need help or have a suggestion?
+
+Visit the official [Multisite Dashboard Switcher Page](http://samjlevy.com/msds)
+Visit the official [Multisite Dashboard Switcher Forum](http://samjlevy.com/forums/forumdisplay.php?fid=9)
+
 == Installation ==
 
 1. Upload `multisite-dashboard-switcher` folder to the `/wp-content/plugins/` directory
