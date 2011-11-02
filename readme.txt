@@ -14,8 +14,8 @@ can be grouped by letter.
 
 Need help or have a suggestion?
 
-Visit the official [Multisite Dashboard Switcher Page](http://samjlevy.com/msds)
-Visit the official [Multisite Dashboard Switcher Forum](http://samjlevy.com/forums/forumdisplay.php?fid=9)
+* Visit the official [Multisite Dashboard Switcher Page](http://samjlevy.com/msds)
+* Visit the official [Multisite Dashboard Switcher Forum](http://samjlevy.com/forums/forumdisplay.php?fid=9)
 
 == Installation ==
 
