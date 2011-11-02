@@ -20,7 +20,7 @@ The switcher will now appear on the Admin Menu
 
 == Screenshots ==
 
-1. screenshot.png
+1. Multisite Dashboard Switcher in action
 
 == Changelog ==
 
