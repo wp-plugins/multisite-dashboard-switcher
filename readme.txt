@@ -3,7 +3,7 @@ Contributors: sjlevy
 Tags: multisite, switcher, switch, network
 Requires at least: 3.2.1
 Tested up to: 3.2.1
-Stable tag: 1.0
+Stable tag: 1.1
 
 == Description ==
 
@@ -29,5 +29,11 @@ The switcher will now appear on the Admin Menu
 
 == Changelog ==
 
+= 1.1 =
+November 5, 2011
+* Fixed: Subdomain multisites
+* Added: Visit link for each site, HTTPS persistence on links
+
 = 1.0 =
+November 2, 2011
 * First version released
