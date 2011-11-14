@@ -30,14 +30,20 @@ The switcher will now appear on the Admin Menu
 == Changelog ==
 
 = 1.2 =
+
 November 14, 2011
+
 * Added: Support for MU installations that have a hybrid of both Subdomain and Folder-based URLs
 
 = 1.1 =
+
 November 5, 2011
+
 * Fixed: Subdomain multisites
 * Added: Visit link for each site, HTTPS persistence on links
 
 = 1.0 =
+
 November 2, 2011
+
 * First version released
