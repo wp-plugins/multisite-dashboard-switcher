@@ -3,7 +3,7 @@ Contributors: sjlevy
 Tags: multisite, switcher, switch, network
 Requires at least: 3.2.1
 Tested up to: 3.2.1
-Stable tag: 1.1
+Stable tag: 1.2
 
 == Description ==
 
@@ -28,6 +28,10 @@ The switcher will now appear on the Admin Menu
 1. Multisite Dashboard Switcher in action
 
 == Changelog ==
+
+= 1.2 =
+November 14, 2011
+* Added: Support for MU installations that have a hybrid of both Subdomain and Folder-based URLs
 
 = 1.1 =
 November 5, 2011

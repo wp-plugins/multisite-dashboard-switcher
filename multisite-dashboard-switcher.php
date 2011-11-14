@@ -3,7 +3,7 @@
 	Plugin Name: Multisite Dashboard Switcher
 	Plugin URI: http://samjlevy.com/msds
 	Description: Adds a menu to the admin bar for easy switching between multisite dashboards.
-	Version: 1.1
+	Version: 1.2
 	Author: Sam J Levy
 	Author URI: http://samjlevy.com/
 */
@@ -75,7 +75,7 @@ function msds_loop($letter=false) {
 	} else $site_parent = "msds";
 
 	// query sites
-	$blogs = $wpdb->get_results("SELECT domain, path,".((SUBDOMAIN_INSTALL) ? "domain" : "REPLACE(path,'/','')")." AS bname FROM $wpdb->blogs WHERE blog_id != 1".(($letter) ? " AND UPPER(LEFT(".((SUBDOMAIN_INSTALL) ? "domain" : "REPLACE(path,'/','')").", 1) = '$letter')" : "")." ORDER BY path",ARRAY_A);
+	$blogs = $wpdb->get_results("SELECT domain, path,IF(path = '/',domain,REPLACE(path,'/','')) AS bname FROM $wpdb->blogs WHERE UPPER(LEFT(IF(path = '/',domain,REPLACE(path,'/','')), 1)) = '$letter' ORDER BY path",ARRAY_A);
 	
 	// add menu item for each site
 	$i = 1;
@@ -90,21 +90,19 @@ function msds_loop($letter=false) {
 function msds() {
 	if(!is_multisite() || !is_super_admin() || !is_admin_bar_showing()) return;
 	global $wp_admin_bar,$wpdb,$current_blog;
-	$domain = (($_SERVER['HTTPS']=="on") ? "https://" : "http://").DOMAIN_CURRENT_SITE;
+	$domain = (($_SERVER['HTTPS']=="on") ? "https://" : "http://").$current_blog->domain;
 	
 	// current site path
-	if(isset($current_blog->path) && $current_blog->path != "") {
-		if(is_network_admin()) {
-			$temp = "Network";
-		} else {
-			if($current_blog->blog_id == 1) $temp = "Root Site";
-			else {
-				if(SUBDOMAIN_INSTALL) $temp = $current_blog->domain;
-				else $temp = str_replace('/','',$current_blog->path);
-			}
+	if(is_network_admin()) {
+		$temp = "Network";
+	} else {
+		if($current_blog->blog_id == 1) $temp = "Root Site";
+		else {
+			if($current_blog->path == "/") $temp = $current_blog->domain;
+			else $temp = $current_blog->path;
 		}
-		$current = "<span style='margin-left:8px;padding:4px;background-color:yellow;color:#000;font-weight:bold;text-shadow:none;'>".$temp."</span>";
 	}
+	$current = "<span style='margin-left:8px;padding:4px;background-color:yellow;color:#000;font-weight:bold;text-shadow:none;'>".$temp."</span>";
 
 	// add top menu
 	$wp_admin_bar->add_menu(array('parent'=>false,'id'=>'msds','title'=>__('Multisite Switcher').$current));
@@ -121,7 +119,7 @@ function msds() {
 
 	if(get_site_option('msds_group')=="alpha") {
 		// get alphabet
-		$alpha = $wpdb->get_results("SELECT DISTINCT UPPER(LEFT(".((SUBDOMAIN_INSTALL) ? "domain" : "REPLACE(path,'/','')").", 1)) AS first_letter FROM $wpdb->blogs WHERE blog_id != 1 ORDER BY first_letter",ARRAY_A);
+		$alpha = $wpdb->get_results("SELECT DISTINCT UPPER(LEFT(IF(path = '/',domain,REPLACE(path,'/','')), 1)) AS first_letter FROM $wpdb->blogs ORDER BY first_letter",ARRAY_A);
 		
 		// call main loop for each letter
 		foreach($alpha as $a) msds_loop($a['first_letter']);
