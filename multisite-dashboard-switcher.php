@@ -75,7 +75,7 @@ function msds_loop($letter=false) {
 	} else $site_parent = "msds";
 
 	// query sites
-	$blogs = $wpdb->get_results("SELECT domain, path,IF(path = '/',domain,REPLACE(path,'/','')) AS bname FROM $wpdb->blogs".(($letter) ? " WHERE UPPER(LEFT(IF(path = '/',domain,REPLACE(path,'/','')), 1)) = '$letter'" : "")." ORDER BY path",ARRAY_A);
+	$blogs = $wpdb->get_results("SELECT domain, path,IF(path = '/',domain,REPLACE(path,'/','')) AS bname FROM $wpdb->blogs".(($letter) ? " WHERE UPPER(LEFT(IF(path = '/',domain,REPLACE(path,'/','')), 1)) = '$letter'" : "")." ORDER BY bname",ARRAY_A);
 	
 	// add menu item for each site
 	$i = 1;
