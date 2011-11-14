@@ -99,7 +99,7 @@ function msds() {
 		if($current_blog->blog_id == 1) $temp = "Root Site";
 		else {
 			if($current_blog->path == "/") $temp = $current_blog->domain;
-			else $temp = $current_blog->path;
+			else $temp = str_replace("/","",$current_blog->path);
 		}
 	}
 	$current = "<span style='margin-left:8px;padding:4px;background-color:yellow;color:#000;font-weight:bold;text-shadow:none;'>".$temp."</span>";
