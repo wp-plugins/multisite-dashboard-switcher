@@ -33,7 +33,7 @@ The switcher will now appear on the Admin Menu
 
 November 14, 2011
 
-* Added: Support for MU installations that have a hybrid of both Subdomain and Folder-based URLs
+* Added: Support for MU installations that have a hybrid of both subdomain and subdir URLs
 
 = 1.1 =
 
