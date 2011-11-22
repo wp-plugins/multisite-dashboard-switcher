@@ -3,7 +3,7 @@ Contributors: sjlevy
 Tags: multisite, switcher, switch, network
 Requires at least: 3.2.1
 Tested up to: 3.2.1
-Stable tag: 1.2
+Stable tag: 1.3
 
 == Description ==
 
@@ -28,6 +28,12 @@ The switcher will now appear on the Admin Menu
 1. Multisite Dashboard Switcher in action
 
 == Changelog ==
+
+= 1.3 =
+
+November 22, 2011
+
+* Added: Option to show site ID's in menu
 
 = 1.2 =
 

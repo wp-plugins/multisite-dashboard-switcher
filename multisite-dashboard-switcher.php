@@ -3,7 +3,7 @@
 	Plugin Name: Multisite Dashboard Switcher
 	Plugin URI: http://samjlevy.com/msds
 	Description: Adds a menu to the admin bar for easy switching between multisite dashboards.
-	Version: 1.2
+	Version: 1.3
 	Author: Sam J Levy
 	Author URI: http://samjlevy.com/
 */
@@ -36,11 +36,13 @@ function msds_settings_menu() {
 
 function msds_settings() {
 	$msds_group = get_site_option('msds_group');
+	$msds_blog_ids = get_site_option('msds_blog_ids');
 	echo "<h2>Multisite Dashboard Switcher - Options</h2>";
 	if(isset($_GET['updated'])) echo "<p style='color:green;font-weight:bold;'>Options updated</p>";
 	echo "<form action='".admin_url('admin-post.php?action=update_my_settings')."' method='post'>";
 	wp_nonce_field('msds_nonce');
 	echo "<p><input type='checkbox' name='msds_group'".(($msds_group=="alpha") ? " checked='checked'" : "")." />&nbsp;&nbsp;Group sites by letter</p>";
+	echo "<p><input type='checkbox' name='msds_blog_ids'".(($msds_blog_ids=="1") ? " checked='checked'" : "")." />&nbsp;&nbsp;Show site ID's in menu</p>";
 	echo "<p><input type='submit' name='submit' value='Save Changes' class='button-primary' /></p>";
 	echo "</form>";
 }
@@ -48,8 +50,8 @@ function msds_settings() {
 function msds_settings_save() {
 	check_admin_referer('msds_nonce');
 	if(!current_user_can('manage_network_settings')) return;
-	if(isset($_POST['msds_group'])) update_site_option('msds_group', 'alpha');
-	else delete_site_option('msds_group');
+	if(isset($_POST['msds_group'])) update_site_option('msds_group', 'alpha'); else delete_site_option('msds_group');
+	if(isset($_POST['msds_blog_ids'])) update_site_option('msds_blog_ids', '1'); else delete_site_option('msds_blog_ids');
 	wp_redirect(admin_url('network/settings.php?page=msds-options&updated=true'));
 	exit;
 }
@@ -75,13 +77,14 @@ function msds_loop($letter=false) {
 	} else $site_parent = "msds";
 
 	// query sites
-	$blogs = $wpdb->get_results("SELECT domain, path,IF(path = '/',domain,REPLACE(path,'/','')) AS bname FROM $wpdb->blogs".(($letter) ? " WHERE UPPER(LEFT(IF(path = '/',domain,REPLACE(path,'/','')), 1)) = '$letter'" : "")." ORDER BY bname",ARRAY_A);
+	$blogs = $wpdb->get_results("SELECT blog_id, domain, path,IF(path = '/',domain,REPLACE(path,'/','')) AS bname FROM $wpdb->blogs".(($letter) ? " WHERE UPPER(LEFT(IF(path = '/',domain,REPLACE(path,'/','')), 1)) = '$letter'" : "")." ORDER BY bname",ARRAY_A);
 	
 	// add menu item for each site
 	$i = 1;
 	foreach($blogs as $b) {
+		$b_title = $b['bname'] . ((get_site_option('msds_blog_ids')=="1") ? " (".$b['blog_id'].")" : "");
 		$url = (($_SERVER['HTTPS']=="on") ? "https://" : "http://").$b['domain'].$b['path'].'wp-admin';
-		$wp_admin_bar->add_menu(array('parent'=>$site_parent,'id'=>'msds_'.$letter.$i,'title'=>$b['bname'],'href'=>$url));
+		$wp_admin_bar->add_menu(array('parent'=>$site_parent,'id'=>'msds_'.$letter.$i,'title'=>$b_title,'href'=>$url));
 		msds_pages('site',$letter.$i,$url);
 		$i++;
 	}
@@ -101,6 +104,7 @@ function msds() {
 			if($current_blog->path == "/") $temp = $current_blog->domain;
 			else $temp = str_replace("/","",$current_blog->path);
 		}
+		if(get_site_option('msds_blog_ids')=="1") $temp .= " (".$current_blog->blog_id.")";
 	}
 	$current = "<span style='margin-left:8px;padding:4px;background-color:yellow;color:#000;font-weight:bold;text-shadow:none;'>".$temp."</span>";
 
@@ -114,7 +118,9 @@ function msds() {
 	
 	// add root site menu
 	$r_url = $domain."/wp-admin";
-	$wp_admin_bar->add_menu(array('parent'=>'msds','id'=>'msds_root','title'=>__('Root Site'),'href'=>$r_url));
+	$r_title = "Root Site";
+	if(get_site_option('msds_blog_ids')=="1") $r_title .= " (1)";
+	$wp_admin_bar->add_menu(array('parent'=>'msds','id'=>'msds_root','title'=>$r_title,'href'=>$r_url));
 	msds_pages('site','root',$r_url);
 
 	if(get_site_option('msds_group')=="alpha") {
@@ -130,5 +136,6 @@ function msds() {
 
 function msds_uninstall() {
 	delete_option('msds_group');
+	delete_option('msds_blog_ids');
 }
 ?>
