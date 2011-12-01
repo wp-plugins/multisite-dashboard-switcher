@@ -3,7 +3,7 @@
 	Plugin Name: Multisite Dashboard Switcher
 	Plugin URI: http://samjlevy.com/msds
 	Description: Adds a menu to the admin bar for easy switching between multisite dashboards.
-	Version: 1.3
+	Version: 1.4
 	Author: Sam J Levy
 	Author URI: http://samjlevy.com/
 */
@@ -62,8 +62,8 @@ function msds_pages($type,$id,$url) {
 	elseif($type == "network") $pages = array('dashboard'=>'index.php','sites'=>'sites.php','users'=>'users.php','themes'=>'themes.php','plugins'=>'plugins.php','settings'=>'settings.php','updates'=>'update-core.php');
 	else return false;
 	foreach($pages as $key=>$value) {
-		if($key=="visit") $wp_admin_bar->add_menu(array('parent'=>'msds_'.$id,'id' =>'msds_'.$id.'_visit','title'=>ucfirst($key),'href'=>str_replace('wp-admin','',$url)));
-		else $wp_admin_bar->add_menu(array('parent'=>'msds_'.$id,'id' =>'msds_'.$id.'_'.$key,'title'=>ucfirst($key),'href'=>$url.'/'.$value));
+		if($key=="visit") $wp_admin_bar->add_menu(array('parent'=>'msds_'.$id,'id' =>'msds_'.$id.'_visit','title'=>__('Visit Site'),'href'=>str_replace('wp-admin/','',$url)));
+		else $wp_admin_bar->add_menu(array('parent'=>'msds_'.$id,'id' =>'msds_'.$id.'_'.$key,'title'=>__(ucfirst($key)),'href'=>$url.$value));
 	}
 }
 
@@ -83,7 +83,7 @@ function msds_loop($letter=false) {
 	$i = 1;
 	foreach($blogs as $b) {
 		$b_title = $b['bname'] . ((get_site_option('msds_blog_ids')=="1") ? " (".$b['blog_id'].")" : "");
-		$url = (($_SERVER['HTTPS']=="on") ? "https://" : "http://").$b['domain'].$b['path'].'wp-admin';
+		$url = get_admin_url($b['blog_id']);
 		$wp_admin_bar->add_menu(array('parent'=>$site_parent,'id'=>'msds_'.$letter.$i,'title'=>$b_title,'href'=>$url));
 		msds_pages('site',$letter.$i,$url);
 		$i++;
@@ -93,13 +93,12 @@ function msds_loop($letter=false) {
 function msds() {
 	if(!is_multisite() || !is_super_admin() || !is_admin_bar_showing()) return;
 	global $wp_admin_bar,$wpdb,$current_blog;
-	$domain = (($_SERVER['HTTPS']=="on") ? "https://" : "http://").$current_blog->domain;
 	
 	// current site path
 	if(is_network_admin()) {
-		$temp = "Network";
+		$temp = __('Network');
 	} else {
-		if($current_blog->blog_id == 1) $temp = "Root Site";
+		if($current_blog->blog_id == 1) $temp = __('Root Site');
 		else {
 			if($current_blog->path == "/") $temp = $current_blog->domain;
 			else $temp = str_replace("/","",$current_blog->path);
@@ -110,15 +109,15 @@ function msds() {
 
 	// add top menu
 	$wp_admin_bar->add_menu(array('parent'=>false,'id'=>'msds','title'=>__('Multisite Switcher').$current));
-	
+
 	// add network menu
-	$n_url = $domain."/wp-admin/network";
+	$n_url = network_admin_url();
 	$wp_admin_bar->add_menu(array('parent'=>'msds','id'=>'msds_network','title'=>__('Network'),'href'=>$n_url));
 	msds_pages('network','network',$n_url);
 	
 	// add root site menu
-	$r_url = $domain."/wp-admin";
-	$r_title = "Root Site";
+	$r_url = get_admin_url(1);
+	$r_title = __('Root Site');
 	if(get_site_option('msds_blog_ids')=="1") $r_title .= " (1)";
 	$wp_admin_bar->add_menu(array('parent'=>'msds','id'=>'msds_root','title'=>$r_title,'href'=>$r_url));
 	msds_pages('site','root',$r_url);
